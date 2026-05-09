@@ -1,0 +1,125 @@
+
+.popular-container {
+    padding: 20px;
+}
+
+/* Trending Carousel */
+.popular-header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #d7dadc;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.trending-carousel {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+}
+.trending-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.trending-card {
+    min-width: 280px;
+    height: 140px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+}
+
+.trending-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.trending-title {
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.trending-subtitle {
+    color: white;
+    font-size: 12px;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.trending-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.trending-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+.trending-community {
+    color: #d7dadc;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Feed Filters */
+.popular-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #343536;
+    padding-bottom: 12px;
+}
+
+.filter-pill {
+    background: #272729;
+    color: #d7dadc;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-pill:hover {
+    background: #343536;
+}
+
+.filter-pill.active {
+    background: #f6f7f8;
+    color: #1a1a1b;
+}
+
+.dropdown-filter {
+    margin-left: auto;
+    background: transparent;
+    color: #818384;
+}

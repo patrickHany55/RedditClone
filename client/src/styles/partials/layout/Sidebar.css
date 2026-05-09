@@ -1,0 +1,64 @@
+/* Sidebar Styles */
+
+.sidebar-left {
+  width: 260px;
+  flex-shrink: 0;
+  padding: 20px 12px;
+  position: sticky;
+  top: 76px;
+  height: calc(100vh - 76px);
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  margin-bottom: 24px;
+}
+
+.sidebar-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  margin-bottom: 4px;
+}
+
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.sidebar-link.active {
+  background: rgba(255, 69, 0, 0.1);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.sidebar-link svg {
+  flex-shrink: 0;
+}
+
+.community-emoji {
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .sidebar-left {
+    display: none;
+  }
+}

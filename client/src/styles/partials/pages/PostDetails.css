@@ -1,0 +1,278 @@
+/* PostDetails.css */
+/* Container Layout */
+.post-details-container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.post-details-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.back-button {
+  cursor: pointer;
+  color: #818384;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+  color: #eeeeee;
+}
+
+/* Comments Section */
+.comments-section {
+  background-color: transparent;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #343536;
+}
+
+.comments-section h3 {
+  color: #D7DADC;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.no-comments {
+  color: #818384;
+  text-align: center;
+  padding: 32px;
+  font-style: italic;
+}
+
+.community-info-card {
+  background-color: #1A1A1B;
+  border: 1px solid #343536;
+  border-radius: 4px;
+  padding: 16px;
+  height: fit-content;
+}
+
+.ai-summary-card {
+  background-color: #1A1A1B;
+  border: 1px solid #343536;
+  border-radius: 4px;
+  padding: 16px;
+  height: fit-content;
+}
+
+.ai-summary-card h3 {
+  color: #D7DADC;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ai-summary-card p {
+  color: #D7DADC;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.community-desc {
+  font-size: 14px;
+  color: #D7DADC;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Comment Form (Root) */
+.comment-form {
+  margin-bottom: 30px;
+  background: #1A1A1B;
+  border: 1px solid #343536;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  min-height: 120px;
+  color: #D7DADC;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  display: block;
+}
+
+.comment-input:focus {
+  outline: none;
+}
+
+.comment-actions {
+  background: #272729;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-comment-btn {
+  background-color: #D7DADC;
+  color: #1A1A1B;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.submit-comment-btn:hover {
+  background-color: #FFFFFF;
+}
+
+.submit-comment-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* TREE NODE STRUCTURE - KEY TO THE DESIGN */
+.comment-tree-node {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.comment-visual-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 32px; /* fixed width for rail */
+  flex-shrink: 0;
+}
+
+.comment-avatar-container {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 4px;
+}
+
+.comment-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.thread-line-container {
+  flex-grow: 1; /* Fills height below avatar */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.thread-line {
+  width: 2px;
+  background-color: #343536;
+  height: 100%;
+}
+
+.thread-line-container:hover .thread-line {
+  background-color: #D7DADC; /* Highlight on hover */
+}
+
+.comment-content-container {
+  flex-grow: 1;
+  padding-left: 8px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: 600;
+  color: #D7DADC;
+}
+
+.comment-date {
+  color: #818384;
+}
+
+.comment-body {
+  font-size: 14px;
+  line-height: 20px;
+  color: #D7DADC;
+  margin-bottom: 6px;
+}
+
+.comment-footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-btn {
+  background: transparent;
+  border: none;
+  color: #D7DADC; /* Lighter grey/white for visibility */
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.comment-btn:hover {
+  background-color: rgba(215, 218, 220, 0.1);
+  color: #D7DADC;
+}
+
+.comment-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Reply Form */
+.reply-form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background: #1A1A1B;
+  border: 1px solid #343536;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.reply-form .comment-input {
+  border: 1px solid #343536;
+  border-radius: 4px;
+  background: #030303;
+  margin-bottom: 8px;
+  min-height: 80px;
+}
+
+/* Children Container */
+.comment-children {
+  margin-top: 8px;
+  /* Add explicit indentation to make the nesting very obvious */
+  margin-left: 12px; 
+  padding-left: 12px; 
+  border-left: 1px dashed rgba(52, 53, 54, 0.5); /* Optional: visual guide line? Or just space */
+}
+
+@media (max-width: 900px) {
+  .post-details-container {
+    grid-template-columns: 1fr;
+  }
+}

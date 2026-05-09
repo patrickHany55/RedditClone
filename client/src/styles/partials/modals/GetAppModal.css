@@ -1,0 +1,118 @@
+.get-app-modal {
+  max-width: 700px;
+  width: 90%;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.modal-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.modal-header p {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.app-platforms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.platform-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.platform-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.platform-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.platform-icon.ios {
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+  color: white;
+}
+
+.platform-icon.android {
+  background: linear-gradient(135deg, #3DDC84 0%, #00C853 100%);
+  color: white;
+}
+
+.platform-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.qr-container {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.qr-placeholder {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-code {
+  width: 150px;
+  height: 150px;
+  display: block;
+}
+
+.store-link {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.store-link:hover {
+  transform: scale(1.05);
+}
+
+.store-link img {
+  height: 50px;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .app-platforms {
+    grid-template-columns: 1fr;
+  }
+  
+  .get-app-modal {
+    width: 95%;
+    max-width: 400px;
+  }
+}

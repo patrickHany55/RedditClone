@@ -1,0 +1,13 @@
+@import "./partials/modals/AskModal.css";
+@import "./partials/modals/GetAppModal.css";
+
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.72);
+}

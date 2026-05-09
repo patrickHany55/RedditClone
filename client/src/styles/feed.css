@@ -1,0 +1,98 @@
+@import "./partials/feed/Home.css";
+
+.post-card,
+.create-post-bar,
+.filter-bar,
+.widget-card {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.post-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)), var(--surface);
+}
+
+.post-card:hover {
+  border-color: #56616a;
+}
+
+.create-post-bar,
+.filter-bar {
+  background: rgba(26, 26, 27, 0.92);
+}
+
+.filter-btn.active {
+  background: rgba(0, 121, 211, 0.22);
+}
+
+.action-btn {
+  min-height: 30px;
+}
+
+.premium-confirmation-modal {
+  position: relative;
+  width: min(92vw, 420px);
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+
+.premium-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.premium-modal-close:hover {
+  background: var(--hover-overlay);
+  color: var(--text);
+}
+
+.premium-modal-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 69, 0, 0.14);
+  color: var(--brand-orange);
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.premium-confirmation-modal h2 {
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.premium-confirmation-modal p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.premium-modal-note {
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 69, 0, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 69, 0, 0.09);
+  color: #ffb39a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.premium-modal-action {
+  max-width: 220px;
+  margin: 0 auto;
+}

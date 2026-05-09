@@ -1,0 +1,75 @@
+.saved-posts-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.saved-posts-header {
+  margin-bottom: 24px;
+}
+
+.saved-posts-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1c1c1c;
+  margin-bottom: 8px;
+}
+
+.saved-posts-count {
+  color: #787c7e;
+  font-size: 14px;
+}
+
+.saved-posts-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.saved-posts-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.saved-posts-empty h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1c1c1c;
+  margin-bottom: 8px;
+}
+
+.saved-posts-empty p {
+  color: #787c7e;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.explore-btn {
+  background-color: #ff4500;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.explore-btn:hover {
+  background-color: #ff5722;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  color: #787c7e;
+}

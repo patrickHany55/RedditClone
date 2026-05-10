@@ -18,7 +18,13 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    const mongoURI = process.env.MONGO_URL || process.env.MONGO_PUBLIC_URL;
+    
+    if (!mongoURI) {
+      throw new Error("MongoDB URI not found. Set MONGO_URL or MONGO_PUBLIC_URL environment variable.");
+    }
+    
+    await mongoose.connect(mongoURI);
     console.log("MongoDB Connected");
   } catch (error) {
     console.error(error);

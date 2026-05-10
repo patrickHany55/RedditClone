@@ -1,12 +1,15 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PostCard from "../components/ui/PostCard.jsx";
+import { useAuth } from "../context/AuthContext";
 import { useCommunity } from "../context/CommunityContext";
 import {
+  deleteCommunity,
   getCommunities,
   getCommunityStats,
   joinCommunity,
   leaveCommunity,
+  recordCommunityVisit,
 } from "../models/communityModel";
 import { getPostsByCommunity } from "../models/postModel";
 import { getErrorMessage } from "../lib/errorMessage";
@@ -82,6 +85,8 @@ const communityHighlights = {
 
 function Community() {
   const { name } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [community, setCommunity] = useState(null);
@@ -90,6 +95,7 @@ function Community() {
     weeklyContributions: 0,
   });
   const [highlightsExpanded, setHighlightsExpanded] = useState(true);
+  const [rulesExpanded, setRulesExpanded] = useState(false);
   
   const { isJoined, addJoinedCommunity, removeJoinedCommunity, fetchJoinedCommunities } = useCommunity();
 
@@ -102,6 +108,13 @@ function Community() {
         
         if (foundCommunity) {
           setCommunity(foundCommunity);
+
+          try {
+            await recordCommunityVisit(foundCommunity._id);
+          } catch (visitError) {
+            console.error("Error recording community visit:", visitError);
+          }
+
           const [postsResult, statsResult] = await Promise.allSettled([
             getPostsByCommunity(foundCommunity._id),
             getCommunityStats(foundCommunity._id),
@@ -158,6 +171,25 @@ function Community() {
     }
   };
 
+  const handleDeleteCommunity = async () => {
+    if (!community) return;
+
+    const confirmed = window.confirm(
+      `Delete r/${community.name}? This will permanently delete the community, its posts, and its comments.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteCommunity(community._id);
+      await fetchJoinedCommunities();
+      navigate("/");
+    } catch (err) {
+      console.error("Failed to delete community", err);
+      alert(getErrorMessage(err, `Could not delete r/${community.name}.`));
+    }
+  };
+
   if (loading) {
     return (
       <div className="community-page">
@@ -181,7 +213,9 @@ function Community() {
   const weeklyVisitors = communityStats.weeklyVisitors || 0;
   const weeklyContributions = communityStats.weeklyContributions || 0;
   const joined = isJoined(community._id);
+  const isCreator = user && String(community.creator) === String(user._id || user.id);
   const highlights = communityHighlights[name.toLowerCase()] || [];
+  const rules = Array.isArray(community.rules) ? community.rules.filter(Boolean) : [];
 
   return (
     <div className="community-page">
@@ -201,12 +235,21 @@ function Community() {
                 <button className="btn-create-post" onClick={() => window.location.href=`/create?community=${name}`}>
                   + Create Post
                 </button>
-                <button 
-                  className={`btn-join-community ${joined ? 'joined' : ''}`}
-                  onClick={handleJoinToggle}
-                >
-                  {joined ? 'Joined' : 'Join'}
-                </button>
+                {isCreator ? (
+                  <button
+                    className="btn-delete-community"
+                    onClick={handleDeleteCommunity}
+                  >
+                    Delete Community
+                  </button>
+                ) : (
+                  <button 
+                    className={`btn-join-community ${joined ? 'joined' : ''}`}
+                    onClick={handleJoinToggle}
+                  >
+                    {joined ? 'Joined' : 'Join'}
+                  </button>
+                )}
 
               </div>
             </div>
@@ -280,14 +323,27 @@ function Community() {
 
           <div className="community-bookmarks">
             <div className="bookmarks-header">COMMUNITY BOOKMARKS</div>
-            <button className="btn-detailed-rules">Detailed Rules</button>
-          </div>
-
-          <div className="request-section">
-            <div className="request-header">
-              <span className="request-title">REQUEST AN EXPLANATION</span>
-              <span>▼</span>
-            </div>
+            <button
+              className="btn-detailed-rules"
+              type="button"
+              onClick={() => setRulesExpanded((expanded) => !expanded)}
+            >
+              <span>Detailed Rules</span>
+              <span>{rulesExpanded ? '▲' : '▼'}</span>
+            </button>
+            {rulesExpanded && (
+              <div className="community-rules-panel">
+                {rules.length > 0 ? (
+                  <ol className="community-rules-list">
+                    {rules.map((rule, index) => (
+                      <li key={`${rule}-${index}`}>{rule}</li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="community-rules-empty">No detailed rules have been added yet.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

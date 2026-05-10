@@ -16,6 +16,13 @@ const communitySchema = new mongoose.Schema(
       required: true,
     },
 
+    rules: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
     creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

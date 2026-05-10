@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { searchCommunities } from "../models/communityModel";
 import { searchUsers } from "../models/userModel";
 import { getErrorMessage } from "../lib/errorMessage";
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const query = searchParams.get("q");
   
   const [communities, setCommunities] = useState([]);
@@ -89,13 +90,43 @@ function SearchPage() {
           ) : people.length > 0 ? (
             <div className="results-list">
               {people.map((person) => (
-                <div key={person._id} className="result-card person-result">
+                <div
+                  key={person._id}
+                  className="result-card person-result clickable-result"
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => navigate(`/u/${person.username}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(`/u/${person.username}`);
+                    }
+                  }}
+                >
                   <div className="result-icon user-icon">u/</div>
                   <div className="result-info">
-                    <span className="result-name">u/{person.username}</span>
+                    <button
+                      type="button"
+                      className="result-name result-name-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/u/${person.username}`);
+                      }}
+                    >
+                      u/{person.username}
+                    </button>
                     <p className="result-meta">Karma: {person.karma || 0}</p>
                   </div>
-                  <Link to={`/u/${person.username}`} className="btn-visit">View Profile</Link>
+                  <button
+                    type="button"
+                    className="btn-visit"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/u/${person.username}`);
+                    }}
+                  >
+                    View Profile
+                  </button>
                 </div>
               ))}
             </div>

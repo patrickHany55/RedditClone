@@ -11,14 +11,37 @@ function getGroqClient() {
     });
 }
 
+function buildLocalPostSummary(title, content) {
+    const cleanTitle = (title || "").trim();
+    const cleanContent = (content || "").trim();
+
+    if (!cleanTitle && !cleanContent) {
+        return "This post does not have enough text to summarize.";
+    }
+
+    if (!cleanContent) {
+        return `This post is titled "${cleanTitle}" but does not include any body text to summarize.`;
+    }
+
+    const sentences = cleanContent.match(/[^.!?]+[.!?]+/g) || [cleanContent];
+    const preview = sentences.slice(0, 2).join(" ").trim() || cleanContent;
+    const trimmedPreview = preview.length > 300 ? `${preview.substring(0, 300)}...` : preview;
+
+    if (cleanContent.length < 100) {
+        return `Brief post: ${trimmedPreview}`;
+    }
+
+    return `Preview: ${trimmedPreview}`;
+}
+
 export async function summarizePost(title, content) {
     try {
         console.log('=== AI Summarization Request (Groq) ===');
         console.log('API Key exists:', !!process.env.GROQ_API_KEY);
 
-        if (!content || content.length < 100) {
-            console.log('Content too short, skipping summarization');
-            return null;
+        if (!content || content.trim().length < 100) {
+            console.log('Content too short for AI summarization; using local summary');
+            return buildLocalPostSummary(title, content);
         }
 
         const groq = getGroqClient();
@@ -38,6 +61,10 @@ export async function summarizePost(title, content) {
         });
 
         const text = completion.choices[0]?.message?.content;
+        if (!text) {
+            return buildLocalPostSummary(title, content);
+        }
+
         console.log('Summary generated successfully');
         return text.trim();
 
@@ -47,13 +74,7 @@ export async function summarizePost(title, content) {
 
         // Fallback
         console.log('Used fallback summary generation');
-        if (content) {
-            const sentences = content.match(/[^\.!\?]+[\.!\?]+/g) || [content];
-            const localSummary = sentences.slice(0, 2).join(' ').trim();
-            const finalSummary = localSummary.length > 0 ? localSummary : content.substring(0, 200);
-            return "Note: AI API unavailable/failed. Preview: " + (finalSummary.length > 300 ? finalSummary.substring(0, 300) + '...' : finalSummary);
-        }
-        return null;
+        return `Note: AI API unavailable/failed. ${buildLocalPostSummary(title, content)}`;
     }
 }
 

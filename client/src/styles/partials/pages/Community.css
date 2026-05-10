@@ -1,4 +1,155 @@
 /* Community Page Styles */
+.communities-directory {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+.communities-directory-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.communities-directory-header h1 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.communities-directory-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.communities-create-link,
+.communities-open-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.communities-create-link {
+  background: var(--blue);
+  color: #fff;
+  padding: 9px 16px;
+  font-size: 14px;
+}
+
+.communities-create-link:hover {
+  background: #0090ff;
+}
+
+.communities-status {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  padding: 28px;
+  text-align: center;
+}
+
+.communities-list-page {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.communities-list-row {
+  display: grid;
+  grid-template-columns: 32px 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.communities-list-row:last-child {
+  border-bottom: none;
+}
+
+.communities-list-row:hover {
+  background: var(--hover-overlay);
+}
+
+.communities-rank {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.communities-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(215, 218, 220, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.communities-row-main {
+  min-width: 0;
+}
+
+.communities-row-name {
+  color: var(--text);
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  text-decoration: none;
+}
+
+.communities-row-name:hover {
+  text-decoration: underline;
+}
+
+.communities-row-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.communities-row-description {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 6px 0 0;
+}
+
+.communities-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.communities-open-link {
+  color: var(--blue);
+  font-size: 13px;
+  padding: 7px 10px;
+}
+
+.communities-open-link:hover {
+  background: rgba(0, 121, 211, 0.12);
+}
+
+.btn-join.joined {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
 .community-page {
   display: flex;
   max-width: 1400px;
@@ -106,6 +257,22 @@
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
+}
+
+.btn-delete-community {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid #ff4500;
+  border-radius: 9999px;
+  color: #ff4500;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-delete-community:hover {
+  background: rgba(255, 69, 0, 0.12);
 }
 
 .btn-more {
@@ -304,10 +471,44 @@
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .btn-detailed-rules:hover {
   background: var(--bg-hover);
+}
+
+.community-rules-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.9rem;
+}
+
+.community-rules-list {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.community-rules-list li {
+  margin-bottom: 0.5rem;
+}
+
+.community-rules-list li:last-child {
+  margin-bottom: 0;
+}
+
+.community-rules-empty {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin: 0;
 }
 
 .request-section {
@@ -365,6 +566,20 @@
 }
 
 @media (max-width: 640px) {
+  .communities-directory-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .communities-list-row {
+    grid-template-columns: 28px 38px minmax(0, 1fr);
+  }
+
+  .communities-row-actions {
+    grid-column: 3;
+    justify-content: flex-start;
+  }
+
   .community-page {
     padding: 0;
   }

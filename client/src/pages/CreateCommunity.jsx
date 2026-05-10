@@ -7,6 +7,7 @@ import { getErrorMessage } from "../lib/errorMessage";
 function CreateCommunity() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [rulesText, setRulesText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
@@ -23,7 +24,11 @@ function CreateCommunity() {
     try {
       const res = await createCommunity({
         name,
-        description
+        description,
+        rules: rulesText
+          .split("\n")
+          .map((rule) => rule.trim())
+          .filter(Boolean)
       });
       
       // Refresh joined list
@@ -73,6 +78,21 @@ function CreateCommunity() {
               className="community-textarea"
               maxLength={500}
             />
+          </div>
+
+          <div className="form-group">
+            <label>Rules</label>
+            <p className="sub-label">Add one rule per line. These will appear in the community sidebar.</p>
+            <textarea
+              value={rulesText}
+              onChange={(e) => setRulesText(e.target.value)}
+              className="community-textarea community-rules-textarea"
+              maxLength={1000}
+              placeholder={"Be respectful\nNo spam\nStay on topic"}
+            />
+            <div className="char-count">
+              {rulesText.split("\n").map((rule) => rule.trim()).filter(Boolean).length}/10 rules
+            </div>
           </div>
 
           {error && <div className="error-message">{error}</div>}

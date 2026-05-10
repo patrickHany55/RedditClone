@@ -41,29 +41,52 @@ export const createPost = handleAsync(async (req, res) => {
 // Get posts by community
 export const getPostsByCommunity = handleAsync(async (req, res) => {
   const posts = await Post.find({ community: req.params.communityId })
-    .populate('author', 'username')
+    .populate("author", "username")
+    .populate("community", "name")
     .sort({ createdAt: -1 });
-  res.json(posts);
+
+  const postsWithCounts = await populatePostFields(posts);
+  res.json(postsWithCounts);
 });
 
 // Upvote / downvote a post
 export const votePost = handleAsync(async (req, res) => {
   const { type } = req.body; // 'upvote' or 'downvote'
+
+  if (!["upvote", "downvote"].includes(type)) {
+    return res.status(400).json({ message: "Vote type must be upvote or downvote" });
+  }
+
   const post = await Post.findById(req.params.postId);
 
-  // Remove opposite vote if exists
-  post.upvotes = post.upvotes.filter(id => id.toString() !== req.user.id);
-  post.downvotes = post.downvotes.filter(id => id.toString() !== req.user.id);
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
 
-  // Add new vote
-  if (type === 'upvote') {
-    post.upvotes.push(req.user.id);
-  } else {
-    post.downvotes.push(req.user.id);
+  const userId = req.user._id.toString();
+  const alreadyUpvoted = post.upvotes.some(id => id.toString() === userId);
+  const alreadyDownvoted = post.downvotes.some(id => id.toString() === userId);
+
+  post.upvotes = post.upvotes.filter(id => id.toString() !== userId);
+  post.downvotes = post.downvotes.filter(id => id.toString() !== userId);
+
+  if (type === "upvote" && !alreadyUpvoted) {
+    post.upvotes.push(req.user._id);
+  }
+
+  if (type === "downvote" && !alreadyDownvoted) {
+    post.downvotes.push(req.user._id);
   }
 
   await post.save();
-  res.json(post);
+
+  const populatedPost = await post.populate([
+    { path: "author", select: "username" },
+    { path: "community", select: "name" },
+  ]);
+  const [postWithCounts] = await populatePostFields([populatedPost]);
+
+  res.json(postWithCounts);
 });
 
 // Delete post

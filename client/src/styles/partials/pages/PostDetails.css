@@ -203,6 +203,19 @@
   color: #D7DADC;
 }
 
+.comment-author-link {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: none;
+}
+
+.comment-author-link:hover {
+  text-decoration: underline;
+}
+
 .comment-date {
   color: #818384;
 }

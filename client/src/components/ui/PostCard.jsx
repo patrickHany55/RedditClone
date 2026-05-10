@@ -13,6 +13,7 @@ import { getErrorMessage } from "../../lib/errorMessage";
 function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const authorUsername = post.author?.username;
   const [vote, setVote] = useState(0); // -1, 0, 1
   const [score, setScore] = useState(post.score ?? 123);
   const [summary, setSummary] = useState(post.summary || null);
@@ -22,14 +23,22 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
 
   useEffect(() => {
     // Initialize vote state based on user
+    setScore(post.score ?? 0);
+
     if (user && post) {
-      if (post.upvotes?.includes(user.id || user._id)) {
+      const userId = String(user.id || user._id);
+      const hasUpvoted = post.upvotes?.some(id => String(id) === userId);
+      const hasDownvoted = post.downvotes?.some(id => String(id) === userId);
+
+      if (hasUpvoted) {
         setVote(1);
-      } else if (post.downvotes?.includes(user.id || user._id)) {
+      } else if (hasDownvoted) {
         setVote(-1);
       } else {
         setVote(0);
       }
+    } else {
+      setVote(0);
     }
   }, [post, user]);
 
@@ -52,9 +61,12 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
          setScore(s => s + 1);
       }
 
-      await votePost(post._id, 'upvote');
+      const response = await votePost(post._id, 'upvote');
+      setScore(response.data.score ?? 0);
     } catch (error) {
       console.error("Error voting:", error);
+      setVote(vote);
+      setScore(post.score ?? 0);
       alert(getErrorMessage(error, "Could not upvote this post."));
     }
   }
@@ -78,9 +90,12 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
         setScore(s => s - 1);
       }
 
-      await votePost(post._id, 'downvote');
+      const response = await votePost(post._id, 'downvote');
+      setScore(response.data.score ?? 0);
     } catch (error) {
       console.error("Error voting:", error);
+      setVote(vote);
+      setScore(post.score ?? 0);
       alert(getErrorMessage(error, "Could not downvote this post."));
     }
   }
@@ -104,11 +119,8 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
       console.error('Error generating summary:', error);
       console.error('Error details:', error.response?.data);
       alert(getErrorMessage(error, "Could not generate a summary for this post."));
-      setLoadingSummary(false); // Reset loading state on error
     } finally {
-      if (summary) {
-        setLoadingSummary(false);
-      }
+      setLoadingSummary(false);
     }
   }
 
@@ -205,7 +217,20 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
               <span>•</span>
             </>
           )}
-          <span style={{ color: '#787c7e' }}>Posted by u/{post.author?.username || post.author || 'deleted'}</span>
+          {authorUsername ? (
+            <button
+              type="button"
+              className="user-link"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/u/${authorUsername}`);
+              }}
+            >
+              Posted by u/{authorUsername}
+            </button>
+          ) : (
+            <span style={{ color: '#787c7e' }}>Posted by u/deleted</span>
+          )}
           <span>•</span>
           <span>{post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'just now'}</span>
         </div>
@@ -213,6 +238,17 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
         <h3 className="post-title">{post.title}</h3>
         
         {post.content && <div className="post-body">{post.content}</div>}
+
+        {(summary || loadingSummary) && (
+          <div className="ai-summary">
+            <div className="ai-summary-header">
+              <span className="ai-badge">AI Summary</span>
+            </div>
+            <div className="ai-summary-text">
+              {loadingSummary ? "Generating summary..." : summary}
+            </div>
+          </div>
+        )}
 
         {/* Display media if exists */}
         {post.mediaType === 'image' && post.mediaUrl && (
@@ -251,9 +287,9 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
         )}
 
         <div className="post-actions">
-          {post.content && post.content.length > 200 && !summary && (
+          {post.content && (
             <div className="action-btn ai-btn" onClick={(e) => handleSummarize(e)}>
-              {loadingSummary ? '⏳ Summarizing...' : '🤖 Summarize'}
+              {summary ? 'AI Summary Ready' : (loadingSummary ? 'Summarizing...' : 'Summarize')}
             </div>
           )}
           <div className="action-btn" onClick={(e) => {

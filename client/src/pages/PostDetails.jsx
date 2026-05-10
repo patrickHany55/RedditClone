@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import PostCard from '../components/ui/PostCard';
 import { deleteComment, voteComment } from '../models/commentModel';
-import { addPostComment, getPostById, summarizePost } from '../models/postModel';
+import { addPostComment, getPostById } from '../models/postModel';
 import { getErrorMessage } from '../lib/errorMessage';
 
 // Helper to organize comments into a tree
@@ -51,6 +51,7 @@ function buildCommentTree(comments) {
 // Recursive Comment Component
 // Recursive Comment Component
 function CommentItem({ comment, depth = 0, onReply, onVote, onDelete, user }) {
+  const navigate = useNavigate();
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -81,7 +82,17 @@ function CommentItem({ comment, depth = 0, onReply, onVote, onDelete, user }) {
 
       <div className="comment-content-container">
         <div className="comment-header">
-          <span className="comment-author">{comment.author?.username || 'user'}</span>
+          {comment.author?.username ? (
+            <button
+              type="button"
+              className="comment-author comment-author-link"
+              onClick={() => navigate(`/u/${comment.author.username}`)}
+            >
+              {comment.author.username}
+            </button>
+          ) : (
+            <span className="comment-author">user</span>
+          )}
           <span className="comment-date">
             • {new Date(comment.createdAt).toLocaleDateString()}
           </span>
@@ -203,9 +214,6 @@ function PostDetails() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [summary, setSummary] = useState(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
-
   useEffect(() => {
     async function fetchPost() {
       try {
@@ -238,33 +246,6 @@ function PostDetails() {
       }, 500);
     }
   }, [loading, post]);
-
-  // Auto-generate AI summary when post loads (for long content)
-  useEffect(() => {
-    async function generateSummary() {
-      if (!post || !post.content || post.content.length < 200) return;
-      if (post.summary) {
-        setSummary(post.summary);
-        return;
-      }
-      
-      setLoadingSummary(true);
-      try {
-        const response = await summarizePost(post._id);
-        if (response.data && response.data.summary) {
-          setSummary(response.data.summary);
-        }
-      } catch (error) {
-        console.error('Error auto-generating summary:', error);
-      } finally {
-        setLoadingSummary(false);
-      }
-    }
-    
-    if (post && !loading) {
-      generateSummary();
-    }
-  }, [post, loading]);
 
   // Handle generalized comment submission (root or nested)
   // We keep 'newComment' state for the root input, but pass this handler for nested replies too
@@ -421,26 +402,6 @@ function PostDetails() {
       </div>
       
       <div className="post-details-right">
-        {/* AI Summary Card */}
-        {(summary || loadingSummary) && (
-          <div className="ai-summary-card" style={{ marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '20px' }}>🤖</span>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>AI Summary</h3>
-            </div>
-            {loadingSummary ? (
-              <div style={{ padding: '12px', textAlign: 'center', color: '#818384' }}>
-                <div style={{ marginBottom: '8px' }}>⏳</div>
-                <p style={{ fontSize: '14px', margin: 0 }}>Generating summary...</p>
-              </div>
-            ) : (
-              <p style={{ fontSize: '14px', lineHeight: '1.5', color: '#D7DADC', margin: 0 }}>
-                {summary}
-              </p>
-            )}
-          </div>
-        )}
-        
         {/* Community Info Card */}
         <div className="community-info-card">
           <h3>r/{post.community?.name || post.community}</h3>

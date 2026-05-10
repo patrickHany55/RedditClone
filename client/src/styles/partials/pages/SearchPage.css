@@ -54,6 +54,19 @@
   padding-bottom: 0;
 }
 
+.clickable-result {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 8px;
+  margin: -8px;
+}
+
+.clickable-result:hover,
+.clickable-result:focus-visible {
+  background: var(--hover-overlay);
+  outline: none;
+}
+
 .result-icon {
   width: 40px;
   height: 40px;
@@ -88,6 +101,15 @@
   display: block;
 }
 
+.result-name-button {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
 .result-name:hover {
   text-decoration: underline;
 }
@@ -117,6 +139,7 @@
   font-weight: 700;
   text-align: center;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 .btn-visit:hover {

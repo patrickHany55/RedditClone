@@ -1,3 +1,4 @@
+//server/src/routes/userRoutes.js
 import express from "express";
 import { getMe, updateMe, searchUsers, getUserByUsername } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";

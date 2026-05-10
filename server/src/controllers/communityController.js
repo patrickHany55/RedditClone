@@ -1,8 +1,10 @@
 /* //server/src/controllers/communityController.js */
 import Community from "../models/Community.js";
+import CommunityVisit from "../models/CommunityVisit.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 import Comment from "../models/Comment.js";
+import jwt from "jsonwebtoken";
 import { sendControllerError } from "../utils/errorResponse.js";
 
 // Helper to populate comment counts AND score (duplicated from postController for now)
@@ -38,26 +40,35 @@ const getWeeklyCommunityStats = async (communityId) => {
       )
     : [];
 
-  const uniqueVisitorIds = new Set();
-
-  recentPosts.forEach((post) => {
-    if (post.author) {
-      uniqueVisitorIds.add(String(post.author));
-    }
-    (post.upvotes || []).forEach((id) => uniqueVisitorIds.add(String(id)));
-    (post.downvotes || []).forEach((id) => uniqueVisitorIds.add(String(id)));
-  });
-
-  recentComments.forEach((comment) => {
-    if (comment.author) {
-      uniqueVisitorIds.add(String(comment.author));
-    }
+  const weeklyVisitors = await CommunityVisit.countDocuments({
+    community: communityId,
+    visitedAt: { $gte: sevenDaysAgo },
   });
 
   return {
-    weeklyVisitors: uniqueVisitorIds.size,
+    weeklyVisitors,
     weeklyContributions: recentPosts.length + recentComments.length,
   };
+};
+
+const getVisitorKey = (req) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader?.startsWith("Bearer ")) {
+    try {
+      const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET);
+      if (decoded?.id) return `user:${decoded.id}`;
+    } catch {
+      // Invalid tokens should not prevent public community page visits.
+    }
+  }
+
+  const forwardedFor = req.headers["x-forwarded-for"];
+  const ip = Array.isArray(forwardedFor)
+    ? forwardedFor[0]
+    : forwardedFor?.split(",")[0]?.trim() || req.ip || req.socket.remoteAddress || "unknown";
+
+  return `anon:${ip}`;
 };
 
 /* ---------------------------------------
@@ -65,7 +76,10 @@ const getWeeklyCommunityStats = async (communityId) => {
 ---------------------------------------- */
 export const createCommunity = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, rules = [] } = req.body;
+    const normalizedRules = Array.isArray(rules)
+      ? rules.map((rule) => String(rule).trim()).filter(Boolean).slice(0, 10)
+      : [];
 
     const exists = await Community.findOne({ name });
     if (exists)
@@ -74,6 +88,7 @@ export const createCommunity = async (req, res) => {
     const community = await Community.create({
       name,
       description,
+      rules: normalizedRules,
       creator: req.user._id,
       members: [req.user._id],
     });
@@ -136,6 +151,36 @@ export const getCommunityStats = async (req, res) => {
   }
 };
 
+export const recordCommunityVisit = async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id);
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    await CommunityVisit.findOneAndUpdate(
+      {
+        community: community._id,
+        visitorKey: getVisitorKey(req),
+      },
+      {
+        $set: { visitedAt: new Date() },
+      },
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+      }
+    );
+
+    const weeklyStats = await getWeeklyCommunityStats(community._id);
+    res.json(weeklyStats);
+  } catch (error) {
+    return sendControllerError(res, error, "Could not record community visit");
+  }
+};
+
 
 /* ---------------------------------------
    JOIN COMMUNITY
@@ -173,6 +218,12 @@ export const leaveCommunity = async (req, res) => {
     if (!community)
       return res.status(404).json({ message: "Community not found" });
 
+    if (community.creator.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        message: "Community creators cannot leave their own community. Delete the community instead.",
+      });
+    }
+
     community.members = community.members.filter(
       (id) => id.toString() !== req.user._id.toString()
     );
@@ -188,6 +239,39 @@ export const leaveCommunity = async (req, res) => {
   }
 };
 
+export const deleteCommunity = async (req, res) => {
+  try {
+    const community = await Community.findById(req.params.id);
+
+    if (!community) {
+      return res.status(404).json({ message: "Community not found" });
+    }
+
+    if (community.creator.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Only the community creator can delete this community" });
+    }
+
+    const posts = await Post.find({ community: community._id }, "_id");
+    const postIds = posts.map((post) => post._id);
+
+    if (postIds.length > 0) {
+      await Comment.deleteMany({ post: { $in: postIds } });
+      await Post.deleteMany({ _id: { $in: postIds } });
+    }
+
+    await CommunityVisit.deleteMany({ community: community._id });
+    await User.updateMany(
+      { joinedCommunities: community._id },
+      { $pull: { joinedCommunities: community._id } }
+    );
+    await community.deleteOne();
+
+    res.json({ message: "Community deleted successfully" });
+  } catch (error) {
+    return sendControllerError(res, error, "Could not delete community");
+  }
+};
+
 /* ---------------------------------------
    GET USER'S JOINED COMMUNITIES
 ---------------------------------------- */
@@ -195,7 +279,7 @@ export const getUserJoinedCommunities = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate(
       "joinedCommunities",
-      "name description members createdAt"
+      "name description rules members createdAt"
     );
 
     if (!user) return res.status(404).json({ message: "User not found" });

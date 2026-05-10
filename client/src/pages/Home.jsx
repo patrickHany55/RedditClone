@@ -226,7 +226,18 @@ function Home() {
                 
                 return (
                   <div key={c._id} className="community-item">
-                    <div className="community-info">
+                    <div
+                      className="community-info"
+                      role="link"
+                      tabIndex={0}
+                      onClick={() => window.location.href = `/communities/${c.name}`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          window.location.href = `/communities/${c.name}`;
+                        }
+                      }}
+                    >
                       <span className="community-rank">{index + 1}</span>
                       <span className="community-icon-widget">{getCommunityIcon(c.name)}</span>
                       <div className="community-details">
@@ -250,16 +261,30 @@ function Home() {
               </div>
             )}
           </div>
-          <button className="btn-view-all">View All</button>
+          <button className="btn-view-all" onClick={() => window.location.href = '/communities'}>
+            View All
+          </button>
         </div>
 
         {/* Footer */}
         <div className="footer-links">
-          <a href="#">User Agreement</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Content Policy</a>
-          <a href="#">Moderator Code of Conduct</a>
-          <div className="footer-copyright">Reddit Inc © 2024. All rights reserved</div>
+          <a href="https://redditinc.com/policies/reddit-rules" target="_blank" rel="noopener noreferrer">
+            Reddit Rules
+          </a>
+          <a href="https://www.reddit.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+          <a href="https://www.redditinc.com/policies/user-agreement" target="_blank" rel="noopener noreferrer">
+            User Agreement
+          </a>
+          <a href="https://support.reddithelp.com/hc/sections/38303584022676-Accessibility" target="_blank" rel="noopener noreferrer">
+            Accessibility
+          </a>
+          <div className="footer-copyright">
+            <a href="https://redditinc.com/" target="_blank" rel="noopener noreferrer">
+              Reddit, Inc. &copy; 2026. All rights reserved.
+            </a>
+          </div>
         </div>
       </div>
 

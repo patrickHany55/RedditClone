@@ -201,6 +201,22 @@
   text-decoration: underline;
 }
 
+.user-link {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: #787c7e;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.user-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
 .post-title {
   font-size: 18px;
   font-weight: 700;
@@ -491,6 +507,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
+}
+
+.community-info:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid rgba(0, 121, 211, 0.45);
+  outline-offset: 3px;
 }
 
 .community-rank {
@@ -558,11 +581,16 @@
 }
 
 .footer-links a {
+  color: inherit;
   transition: text-decoration 0.1s ease;
 }
 
 .footer-links a:hover {
   text-decoration: underline;
+}
+
+.footer-links > a:nth-of-type(4) {
+  flex-basis: 100%;
 }
 
 .footer-copyright {

@@ -8,10 +8,14 @@ import { sendControllerError } from "../utils/errorResponse.js";
 // Helper to populate comment counts AND score
 const populatePostFields = async (posts) => {
   return Promise.all(posts.map(async (post) => {
+    // Filter out posts with null authors or communities
+    if (!post || !post._id || !post.author || !post.community) {
+      return null;
+    }
     const commentCount = await Comment.countDocuments({ post: post._id });
     const score = (post.upvotes ? post.upvotes.length : 0) - (post.downvotes ? post.downvotes.length : 0);
     return { ...post.toObject(), commentCount, score };
-  }));
+  })).then(results => results.filter(p => p !== null));
 };
 
 // Create a post

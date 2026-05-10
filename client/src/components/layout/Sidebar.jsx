@@ -14,7 +14,8 @@ function Sidebar() {
       try {
         setLoadingPopularCommunities(true);
         const response = await getCommunities();
-        const topCommunities = (response.data || [])
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+        const topCommunities = list
           .sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0))
           .slice(0, 5);
         setPopularCommunities(topCommunities);

@@ -42,8 +42,9 @@ function Explore() {
       try {
         setLoading(true);
         const response = await getCommunities();
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
         const communitiesWithStats = await Promise.all(
-          (response.data || []).map(async (community) => {
+          list.map(async (community) => {
             try {
               const statsResponse = await getCommunityStats(community._id);
               return {
@@ -82,9 +83,11 @@ function Explore() {
       } else {
         await joinCommunity(communityId);
         // Find the community object to add to context
-        const community = communities.find(c => c._id === communityId);
-        if (community) {
-          addJoinedCommunity(community);
+        const response = await getCommunities();
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+        const matchedCommunity = list.find(c => c._id === communityId);
+        if (matchedCommunity) {
+          addJoinedCommunity(matchedCommunity);
         }
       }
     } catch (error) {

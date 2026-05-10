@@ -10,10 +10,14 @@ import { sendControllerError } from "../utils/errorResponse.js";
 // Helper to populate comment counts AND score (duplicated from postController for now)
 const populatePostFields = async (posts) => {
   return Promise.all(posts.map(async (post) => {
+    // Filter out posts with null authors or communities
+    if (!post || !post._id || !post.author || !post.community) {
+      return null;
+    }
     const commentCount = await Comment.countDocuments({ post: post._id });
     const score = (post.upvotes ? post.upvotes.length : 0) - (post.downvotes ? post.downvotes.length : 0);
     return { ...post.toObject(), commentCount, score };
-  }));
+  })).then(results => results.filter(p => p !== null));
 };
 
 // Weekly community metrics based on real activity in the last 7 days
@@ -111,7 +115,7 @@ export const createCommunity = async (req, res) => {
 export const getCommunities = async (req, res) => {
   try {
     const communities = await Community.find().sort({ createdAt: -1 });
-    res.json({ data: communities });
+    res.json(communities);
   } catch (error) {
     return sendControllerError(res, error, "Could not load communities");
   }

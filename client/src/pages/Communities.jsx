@@ -39,7 +39,11 @@ function Communities() {
 
       try {
         const response = await getCommunities();
-        const sorted = (response.data || []).sort(
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+        if (!Array.isArray(list)) {
+          throw new Error("Invalid response format");
+        }
+        const sorted = list.sort(
           (a, b) => (b.members?.length || 0) - (a.members?.length || 0)
         );
         setCommunities(sorted);
@@ -64,10 +68,12 @@ function Communities() {
 
       await fetchJoinedCommunities();
       const response = await getCommunities();
+      const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      if (!Array.isArray(list)) {
+        throw new Error("Invalid response format");
+      }
       setCommunities(
-        (response.data || []).sort(
-          (a, b) => (b.members?.length || 0) - (a.members?.length || 0)
-        )
+        list.sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0))
       );
     } catch (err) {
       console.error("Failed to update community membership", err);

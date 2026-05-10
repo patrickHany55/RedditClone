@@ -19,6 +19,11 @@ export const protect = async (req, res, next) => {
       // Attach user to request object (without password)
       req.user = await User.findById(decoded.id).select("-password");
 
+      // Check if user exists in database
+      if (!req.user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
       return next();
     } catch (error) {
       console.log(error);

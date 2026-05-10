@@ -91,7 +91,8 @@ function Home() {
         setPopularCommunitiesError(false);
         const res = await getCommunities();
         // Sort by member count and take top 5
-        const sorted = res.data
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        const sorted = list
           .sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0))
           .slice(0, 5);
         setPopularCommunities(sorted);

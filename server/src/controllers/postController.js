@@ -228,7 +228,7 @@ export const getPopularPosts = handleAsync(async (req, res) => {
   // Sort by popularity score (descending)
   postsWithScores.sort((a, b) => b.popularityScore - a.popularityScore);
 
-  res.json(postsWithScores);
+  res.json({ data: postsWithScores });
 });
 
 // Get single post by ID

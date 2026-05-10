@@ -111,7 +111,7 @@ export const createCommunity = async (req, res) => {
 export const getCommunities = async (req, res) => {
   try {
     const communities = await Community.find().sort({ createdAt: -1 });
-    res.json(communities);
+    res.json({ data: communities });
   } catch (error) {
     return sendControllerError(res, error, "Could not load communities");
   }

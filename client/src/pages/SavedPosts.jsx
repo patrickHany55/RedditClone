@@ -17,7 +17,8 @@ function SavedPosts() {
       setLoading(true);
       setErrorMessage("");
       const response = await getSavedPosts();
-      setSavedPosts(response.data);
+      const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      setSavedPosts(list);
     } catch (error) {
       console.error("Error fetching saved posts:", error);
       if (error.response?.status === 401) {

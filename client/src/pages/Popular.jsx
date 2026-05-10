@@ -48,9 +48,15 @@ function Popular() {
         setLoading(true);
         // We can use the 'popular' endpoint or just 'hot' logic
         const res = await getPopularPosts();
-        setPosts(res.data);
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        if (Array.isArray(list)) {
+          setPosts(list);
+        } else {
+          setPosts([]);
+        }
       } catch (err) {
         console.error("Failed to fetch popular posts", err);
+        setPosts([]);
       } finally {
         setLoading(false);
       }

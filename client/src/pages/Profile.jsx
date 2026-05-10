@@ -95,6 +95,10 @@ function Profile() {
     }
   };
 
+  const handleDeletePost = (postId) => {
+    setPosts(prevPosts => prevPosts.filter(p => p._id !== postId));
+  };
+
   if (loading) return <div className="profile-loading">Loading...</div>;
   if (error) return <div className="profile-error">{error}</div>;
   if (!profile) return null;
@@ -160,7 +164,7 @@ function Profile() {
         <div className="profile-feed">
           {activeTab === "posts" && (
             posts.length > 0 ? (
-              posts.map(post => <PostCard key={post._id} post={post} />)
+              posts.map(post => <PostCard key={post._id} post={post} onDelete={handleDeletePost} />)
             ) : (
               <div className="empty-feed">
                 u/{profile.username} hasn't posted anything yet.

@@ -220,7 +220,8 @@ function PostDetails() {
         const res = await getPostById(id);
         setPost(res.data);
         if (res.data.comments) {
-          setComments(res.data.comments);
+          const commentsList = Array.isArray(res.data.comments) ? res.data.comments : [];
+          setComments(commentsList);
         }
       } catch (err) {
         console.error("Failed to fetch post", err);
@@ -268,7 +269,8 @@ function PostDetails() {
        // This avoids any mismatch between optimistic state and actual DB state
        const res = await getPostById(id);
        if (res.data.comments) {
-         setComments(res.data.comments);
+         const commentsList = Array.isArray(res.data.comments) ? res.data.comments : [];
+         setComments(commentsList);
        }
        setPost(res.data); // Update post for comment count etc
 

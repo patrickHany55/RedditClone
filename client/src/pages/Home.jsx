@@ -72,7 +72,8 @@ function Home() {
         const sortParam = sortMap[filter] || 'new';
         
         const res = await getPosts(sortParam);
-        setPosts(res.data);
+        const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        setPosts(list);
       } catch (err) {
         console.error("Failed to fetch posts", err);
         setError(getErrorMessage(err, "Could not load posts."));

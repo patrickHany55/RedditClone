@@ -25,6 +25,9 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
     // Initialize vote state based on user
     setScore(post.score ?? 0);
 
+    // Initialize saved state - if on saved posts page, the post is saved
+    setIsSaved(isSavedPage);
+
     if (user && post) {
       const userId = String(user.id || user._id);
       const hasUpvoted = post.upvotes?.some(id => String(id) === userId);
@@ -40,7 +43,7 @@ function PostCard({ post, onDelete, onUnsave, isSavedPage = false }) {
     } else {
       setVote(0);
     }
-  }, [post, user]);
+  }, [post, user, isSavedPage]);
 
   async function handleUpvote() {
     if (!user) {

@@ -26,8 +26,10 @@ function SearchPage() {
           searchUsers(query)
         ]);
         
-        setCommunities(commRes.data);
-        setPeople(usersRes.data);
+        const communities = Array.isArray(commRes.data) ? commRes.data : (commRes.data?.data || []);
+        const users = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.data || []);
+        setCommunities(communities);
+        setPeople(users);
       } catch (err) {
         console.error("Search failed", err);
         setError(getErrorMessage(err, "Could not complete this search."));

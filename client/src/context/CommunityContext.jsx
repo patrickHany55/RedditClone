@@ -27,7 +27,8 @@ export const CommunityProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await getJoinedCommunities();
-      setJoinedCommunities(response.data);
+      const list = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      setJoinedCommunities(list);
     } catch (error) {
       console.error("Error fetching joined communities:", error);
       setJoinedCommunities([]);
